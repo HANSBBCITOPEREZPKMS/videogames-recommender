@@ -3,8 +3,13 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
+header('Content-Type: application/json');
+echo json_encode(['csv_path' => __DIR__ . '/../data/games.csv']);
+exit;
 
-$archivo = "../data/games.csv";
+$archivo = fopen(__DIR__ . '/../data/games.csv', 'r');
+
+
 
 // Función para leer el CSV
 function leerCSV($archivo) {

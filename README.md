@@ -14,4 +14,4 @@ Usa un **API REST** con métodos GET, POST, PUT y DELETE, y almacena los datos e
 - HTML / CSS / JavaScript
 - CSV (sin base de datos)
 
-Desarrollado por [Tu Nombre].
+Desarrollado por [HANS PEREZ].
