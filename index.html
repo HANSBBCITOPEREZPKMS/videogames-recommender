@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎮 Recomendador de Videojuegos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🎮 Recomendador y Gestor de Videojuegos</h1>
+
+    <!-- SECCIÓN BUSCADOR -->
+    <section class="card">
+      <h2>🔍 Buscar juegos por característica</h2>
+      <input type="text" id="buscar_caracteristica" placeholder="Ej: acción, aventura, rol...">
+      <button onclick="buscarJuegos()">Buscar</button>
+      <div id="resultado_busqueda" class="resultado"></div>
+    </section>
+
+    <!-- SECCIÓN AGREGAR JUEGO -->
+    <section class="card">
+      <h2>➕ Agregar nuevo juego</h2>
+      <input type="text" id="nuevo_nombre" placeholder="Nombre del juego">
+      <input type="text" id="nuevo_caracteristica" placeholder="Característica (ej: aventura)">
+      <button onclick="agregarJuego()">Agregar</button>
+      <div id="resultado_agregar" class="resultado"></div>
+    </section>
+
+    <!-- SECCIÓN ACTUALIZAR JUEGO -->
+    <section class="card">
+      <h2>✏️ Actualizar característica</h2>
+      <input type="text" id="actualizar_nombre" placeholder="Nombre del juego existente">
+      <input type="text" id="actualizar_caracteristica" placeholder="Nueva característica">
+      <button onclick="actualizarJuego()">Actualizar</button>
+      <div id="resultado_actualizar" class="resultado"></div>
+    </section>
+
+    <!-- SECCIÓN ELIMINAR JUEGO -->
+    <section class="card">
+      <h2>❌ Eliminar juego</h2>
+      <input type="text" id="eliminar_nombre" placeholder="Nombre del juego">
+      <button onclick="eliminarJuego()">Eliminar</button>
+      <div id="resultado_eliminar" class="resultado"></div>
+    </section>
+  </div>
+
+  <script>
+    const API_URL = "api/games.php";
+
+    // GET: Buscar juegos por característica
+    async function buscarJuegos() {
+      const caracteristica = document.getElementById("buscar_caracteristica").value.trim();
+      const resultado = document.getElementById("resultado_busqueda");
+
+      if (!caracteristica) {
+        resultado.innerHTML = "<p>⚠️ Ingresa una característica.</p>";
+        return;
+      }
+
+      const res = await fetch(`${API_URL}?caracteristica=${encodeURIComponent(caracteristica)}`);
+      const data = await res.json();
+
+      if (data.juegos) {
+        resultado.innerHTML = `<h3>🎯 Juegos encontrados:</h3><ul>${data.juegos.map(j => `<li>${j}</li>`).join('')}</ul>`;
+      } else {
+        resultado.innerHTML = `<p>${data.mensaje || data.error}</p>`;
+      }
+    }
+
+    // POST: Agregar nuevo juego
+    async function agregarJuego() {
+      const nombre = document.getElementById("nuevo_nombre").value.trim();
+      const caracteristica = document.getElementById("nuevo_caracteristica").value.trim();
+      const resultado = document.getElementById("resultado_agregar");
+
+      if (!nombre || !caracteristica) {
+        resultado.innerHTML = "<p>⚠️ Completa ambos campos.</p>";
+        return;
+      }
+
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({nombre, caracteristica})
+      });
+      const data = await res.json();
+      resultado.innerHTML = `<p>${data.mensaje || data.error}</p>`;
+    }
+
+    // PUT: Actualizar característica
+    async function actualizarJuego() {
+      const nombre = document.getElementById("actualizar_nombre").value.trim();
+      const caracteristica = document.getElementById("actualizar_caracteristica").value.trim();
+      const resultado = document.getElementById("resultado_actualizar");
+
+      if (!nombre || !caracteristica) {
+        resultado.innerHTML = "<p>⚠️ Completa ambos campos.</p>";
+        return;
+      }
+
+      const res = await fetch(API_URL, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({nombre, caracteristica})
+      });
+      const data = await res.json();
+      resultado.innerHTML = `<p>${data.mensaje || data.error}</p>`;
+    }
+
+    // DELETE: Eliminar juego
+    async function eliminarJuego() {
+      const nombre = document.getElementById("eliminar_nombre").value.trim();
+      const resultado = document.getElementById("resultado_eliminar");
+
+      if (!nombre) {
+        resultado.innerHTML = "<p>⚠️ Ingresa el nombre del juego a eliminar.</p>";
+        return;
+      }
+
+      const res = await fetch(API_URL, {
+        method: "DELETE",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({nombre})
+      });
+      const data = await res.json();
+      resultado.innerHTML = `<p>${data.mensaje || data.error}</p>`;
+    }
+  </script>
+</body>
+</html>
